@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operational Presence — Philippines 2026</title>
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.9.0/mapbox-gl.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.9.0/mapbox-gl.js"></script>
+<style>
+  :root{ --un-blue:#009EDB; --navy:#01304F; --amber:#F2A900; --ink:#1a1a1a; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; font-family:'Roboto',Arial,sans-serif; color:var(--ink); }
+  #map{ position:absolute; top:0; bottom:0; left:0; right:344px; }
+  .panel{
+    position:absolute; top:14px; left:14px; z-index:2; width:320px; max-width:calc(100vw - 28px);
+    background:#fff; border-top:4px solid var(--un-blue);
+    box-shadow:0 2px 10px rgba(1,48,79,.18); padding:14px 16px 12px;
+  }
+  .panel h1{ font-size:16px; font-weight:700; margin:0 0 2px; color:var(--navy); line-height:1.25; }
+  .panel .sub{ font-size:12px; color:#4a5a66; margin:0 0 10px; font-weight:400; }
+  .stats{ display:flex; gap:14px; margin:8px 0 4px; }
+  .stat .n{ font-size:22px; font-weight:700; color:var(--un-blue); line-height:1; }
+  .stat .l{ font-size:10.5px; text-transform:uppercase; letter-spacing:.03em; color:#6b7883; margin-top:3px; }
+  .note{ font-size:10.5px; color:#7a8791; margin-top:10px; line-height:1.4; border-top:1px solid #eef2f4; padding-top:8px; }
+  .legend{
+    position:absolute; bottom:22px; left:14px; z-index:2; background:#fff;
+    box-shadow:0 2px 10px rgba(1,48,79,.18); padding:12px 16px 10px; width:200px;
+  }
+  .legend .t{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--navy); margin-bottom:10px; }
+  .legcircles{ position:relative; height:70px; }
+  .legcircles .c{ position:absolute; left:8px; bottom:0; border:1.5px solid var(--un-blue);
+    background:rgba(0,158,219,.28); border-radius:50%; }
+  .legcircles .lbl{ position:absolute; font-size:11px; color:#4a5a66; }
+  .legcircles .tick{ position:absolute; left:8px; border-top:1px dotted #9fb0ba; }
+  .attrib{ font-size:9.5px; color:#8a97a1; margin-top:6px; }
+  .mapboxgl-popup-content{ font-family:'Roboto',Arial,sans-serif; padding:12px 14px; border-radius:0; box-shadow:0 3px 14px rgba(1,48,79,.25); }
+  .pop-h{ font-size:14px; font-weight:700; color:var(--navy); margin:0 0 1px; }
+  .pop-s{ font-size:11px; color:#6b7883; margin:0 0 9px; }
+  .pop-count{ font-size:12px; margin:0 0 6px; }
+  .pop-count b{ color:var(--un-blue); font-size:15px; }
+  .pop-orgs{ list-style:none; padding:0; margin:4px 0 0; }
+  .pop-orgs li{ font-size:11.5px; padding:2px 0 2px 14px; position:relative; color:#2a3942; }
+  .pop-orgs li:before{ content:""; position:absolute; left:0; top:8px; width:6px; height:6px; background:var(--un-blue); border-radius:50%; }
+  .mapboxgl-popup-close-button{ font-size:18px; color:#6b7883; padding:2px 7px; }
+
+  /* ---- right sidebar ---- */
+  .side{
+    position:absolute; top:0; right:0; bottom:0; width:344px; z-index:3;
+    background:#fff; border-left:1px solid #e4eaee; overflow-y:auto;
+    box-shadow:-2px 0 10px rgba(1,48,79,.08);
+  }
+  .side::-webkit-scrollbar{ width:9px; }
+  .side::-webkit-scrollbar-thumb{ background:#cdd8de; border:3px solid #fff; border-radius:9px; }
+  .sec{ padding:14px 16px 16px; border-bottom:1px solid #eef2f4; }
+  .sec:last-child{ border-bottom:0; }
+  .sec > .h{
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--navy); margin:0 0 2px; display:flex; align-items:baseline; justify-content:space-between;
+  }
+  .sec > .h .cap{ font-size:9.5px; font-weight:400; letter-spacing:0; text-transform:none; color:#94a3ab; }
+  .sec > .sh{ font-size:10.5px; color:#7a8791; margin:0 0 11px; line-height:1.35; }
+  .flag{ font-size:9.5px; color:#a06b00; background:#fff7e6; border:1px solid #f6e4bd;
+    padding:3px 7px; margin:8px 0 0; line-height:1.35; }
+  .flag b{ font-weight:700; }
+
+  /* pie */
+  .pie-wrap{ display:flex; align-items:center; gap:14px; }
+  .pie-wrap svg{ flex:0 0 auto; }
+  .pie-leg{ flex:1 1 auto; }
+  .pie-leg .row{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:#2a3942; padding:3px 0; }
+  .pie-leg .sw{ width:11px; height:11px; flex:0 0 auto; border-radius:2px; }
+  .pie-leg .row .v{ margin-left:auto; font-weight:700; color:var(--navy); }
+  .pie-leg .row .p{ font-size:10px; color:#8a97a1; width:34px; text-align:right; }
+
+  /* cluster bars */
+  .bars{ display:flex; flex-direction:column; gap:7px; }
+  .bar{ display:grid; grid-template-columns:1fr auto; gap:2px 8px; align-items:center; }
+  .bar .lbl{ font-size:11.5px; color:#2a3942; }
+  .bar .val{ font-size:11px; font-weight:700; color:var(--navy); }
+  .bar .track{ grid-column:1 / -1; height:8px; background:#eef3f6; overflow:hidden; }
+  .bar .fill{ height:100%; background:var(--un-blue); width:0; transition:width .6s cubic-bezier(.22,1,.36,1); }
+
+  /* org pills */
+  .pill-tools{ display:flex; justify-content:space-between; align-items:center; margin:0 0 9px; }
+  .pill-tools .count{ font-size:10.5px; color:#7a8791; }
+  .pill-tools button{
+    font-family:inherit; font-size:10.5px; font-weight:500; color:var(--un-blue);
+    background:none; border:0; cursor:pointer; padding:2px 0;
+  }
+  .pill-tools button:disabled{ color:#c2ccd2; cursor:default; }
+  .pills{ display:flex; flex-wrap:wrap; gap:6px; }
+  .pill{
+    font-family:inherit; font-size:11px; line-height:1.1; color:#2a3942; cursor:pointer;
+    background:#fff; border:1px solid #cdd8de; border-radius:999px; padding:5px 10px;
+    display:inline-flex; align-items:center; gap:6px; transition:background .12s,border-color .12s,color .12s;
+  }
+  .pill:hover{ border-color:var(--un-blue); }
+  .pill .badge{ font-size:9.5px; color:#8a97a1; }
+  .pill.on{ background:var(--un-blue); border-color:var(--un-blue); color:#fff; }
+  .pill.on .badge{ color:rgba(255,255,255,.8); }
+  .pill:focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
+
+  @media (max-width:820px){
+    #map{ right:0; bottom:46%; }
+    .side{ top:54%; width:100%; border-left:0; border-top:1px solid #e4eaee; }
+  }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div class="panel">
+  <h1>Operational Presence — Philippines 2026</h1>
+  <p class="sub">Number of organizations with physical presence, by city/municipality</p>
+  <div class="stats">
+    <div class="stat"><div class="n">166</div><div class="l">Locations</div></div>
+    <div class="stat"><div class="n">10</div><div class="l">Organizations</div></div>
+    <div class="stat"><div class="n">5</div><div class="l">Max / location</div></div>
+  </div>
+  <p class="note">Circle area is proportional to the number of distinct organizations reporting active presence in each city/municipality. Click a circle for the list. 44 presence records could not be geocoded (mainly BARMM Special Geographic Area cluster names) and are not shown.</p>
+</div>
+
+<div class="legend">
+  <div class="t">Organizations</div>
+  <div class="legcircles" id="legcircles"></div>
+  <div class="attrib">Basemap © Mapbox © OpenStreetMap · OCHA ROAP</div>
+</div>
+
+<aside class="side">
+  <div class="sec">
+    <div class="h">Organizations by type <span class="cap">count of orgs</span></div>
+    <p class="sh">Share of the reporting organizations by type.</p>
+    <div class="pie-wrap">
+      <svg id="pie" width="104" height="104" viewBox="0 0 104 104" aria-label="Organizations by type"></svg>
+      <div class="pie-leg" id="pie-leg"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="h">Clusters <span class="cap">orgs per cluster</span></div>
+    <p class="sh">Number of organizations active in each cluster.</p>
+    <div class="bars" id="bars"></div>
+    <p class="flag"><b>Provisional.</b> Cluster membership isn't in the source data — seeded from each org's known mandate. Edit <b>ORG_META</b> to use your 3W assignments.</p>
+  </div>
+
+  <div class="sec">
+    <div class="h">Organizations <span class="cap">tap to filter map</span></div>
+    <div class="pill-tools">
+      <span class="count" id="pill-count"></span>
+      <button id="pill-clear" disabled>Clear filter</button>
+    </div>
+    <div class="pills" id="pills"></div>
+  </div>
+</aside>
+
+<script>
+const DATA = {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[121.0322576,14.55343834]},"properties":{"pcode":"PH1307602","muni":"City of Makati","prov":"Metropolitan Manila Fourth District","reg":"National Capital Region (NCR)","org_count":1,"orgs":["Action Against Hunger"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.1452411,7.155920073]},"properties":{"pcode":"PH0907332","muni":"Zamboanga City","prov":"Zamboanga del Sur","reg":"Region IX (Zamboanga Peninsula)","org_count":1,"orgs":["Action Against Hunger"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[126.0459881,9.750093573]},"properties":{"pcode":"PH1606707","muni":"Dapa","prov":"Surigao del Norte","reg":"Region XIII (Caraga)","org_count":1,"orgs":["Action Against Hunger"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[126.1321304,9.788451748]},"properties":{"pcode":"PH1606710","muni":"General Luna","prov":"Surigao del Norte","reg":"Region XIII (Caraga)","org_count":1,"orgs":["Action Against Hunger"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.9954389,9.858375986]},"properties":{"pcode":"PH1606708","muni":"Del Carmen","prov":"Surigao del Norte","reg":"Region XIII (Caraga)","org_count":1,"orgs":["Action Against Hunger"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[126.0736303,9.999503952]},"properties":{"pcode":"PH1606704","muni":"Burgos","prov":"Surigao del Norte","reg":"Region XIII (Caraga)","org_count":1,"orgs":["Action Against Hunger"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[126.0703998,9.934006822]},"properties":{"pcode":"PH1606720","muni":"San Isidro","prov":"Surigao del Norte","reg":"Region XIII (Caraga)","org_count":1,"orgs":["Action Against Hunger"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.0854792,14.57886671]},"properties":{"pcode":"PH1307403","muni":"City of Pasig","prov":"Metropolitan Manila Second District","reg":"National Capital Region (NCR)","org_count":1,"orgs":["Acted"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.4159726,9.713975726]},"properties":{"pcode":"PH1606719","muni":"San Francisco (Anao-Aon)","prov":"Surigao del Norte","reg":"Region XIII (Caraga)","org_count":1,"orgs":["Acted"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.7856286,9.475184809]},"properties":{"pcode":"PH1606706","muni":"Claver","prov":"Surigao del Norte","reg":"Region XIII (Caraga)","org_count":1,"orgs":["Acted"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.2634005,16.6873655]},"properties":{"pcode":"PH0203110","muni":"Dinapigue","prov":"Isabela","reg":"Region II (Cagayan Valley)","org_count":1,"orgs":["Acted"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.0227965,11.22657229]},"properties":{"pcode":"PH0702221","muni":"Daanbantayan","prov":"Cebu","reg":"Region VII (Central Visayas)","org_count":1,"orgs":["Acted"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.97714,11.14268075]},"properties":{"pcode":"PH0702231","muni":"Medellin","prov":"Cebu","reg":"Region VII (Central Visayas)","org_count":1,"orgs":["Acted"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.004,14.5314088]},"properties":{"pcode":"PH1307605","muni":"Pasay City","prov":"Metropolitan Manila Fourth District","reg":"National Capital Region (NCR)","org_count":1,"orgs":["CFSI"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.0324786,12.88921069]},"properties":{"pcode":"PH1705109","muni":"Sablayan","prov":"Occidental Mindoro","reg":"Region IV-B (MIMAROPA)","org_count":1,"orgs":["Plan International Pilipinas"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.0761696,10.34338082]},"properties":{"pcode":"PH1804517","muni":"La Castellana","prov":"Negros Occidental","reg":"Negros Island Region (NIR)","org_count":1,"orgs":["Catholic Relief Services"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.0968031,16.39968037]},"properties":{"pcode":"PH0307703","muni":"Dilasag","prov":"Aurora","reg":"Region III (Central Luzon)","org_count":1,"orgs":["Catholic Relief Services"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.5240878,12.20275949]},"properties":{"pcode":"PH0504112","muni":"Milagros","prov":"Masbate","reg":"Region V (Bicol Region)","org_count":1,"orgs":["Catholic Relief Services"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.7599786,12.1711177]},"properties":{"pcode":"PH0504121","muni":"Uson","prov":"Masbate","reg":"Region V (Bicol Region)","org_count":1,"orgs":["Catholic Relief Services"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.0074537,10.0681691]},"properties":{"pcode":"PH0806410","muni":"Padre Burgos","prov":"Southern Leyte","reg":"Region VIII (Eastern Visayas)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.1167147,10.31727571]},"properties":{"pcode":"PH0806412","muni":"Saint Bernard","prov":"Southern Leyte","reg":"Region VIII (Eastern Visayas)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[119.91254,10.57867885]},"properties":{"pcode":"PH1705303","muni":"Araceli","prov":"Palawan","reg":"Region IV-B (MIMAROPA)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[119.6642497,10.5240364]},"properties":{"pcode":"PH1705311","muni":"Dumaran","prov":"Palawan","reg":"Region IV-B (MIMAROPA)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.6242333,7.175644209]},"properties":{"pcode":"PH1204717","muni":"Aleosan","prov":"Cotabato (North Cotabato)","reg":"Region XII (SOCCSKSARGEN)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.0656898,7.037487332]},"properties":{"pcode":"PH1204704","muni":"City of Kidapawan (Capital)","prov":"Cotabato (North Cotabato)","reg":"Region XII (SOCCSKSARGEN)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.3434774,11.87230335]},"properties":{"pcode":"PH0802623","muni":"Taft","prov":"Eastern Samar","reg":"Region VIII (Eastern Visayas)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.3212402,11.96837575]},"properties":{"pcode":"PH0802605","muni":"Can-avid","prov":"Eastern Samar","reg":"Region VIII (Eastern Visayas)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.987748,14.21459049]},"properties":{"pcode":"PH0402118","muni":"Silang","prov":"Cavite","reg":"Region IV-A (CALABARZON)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.2586716,13.6430306]},"properties":{"pcode":"PH0501724","muni":"Naga City","prov":"Camarines Sur","reg":"Region V (Bicol Region)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.5180297,13.42995237]},"properties":{"pcode":"PH0501705","muni":"Buhi","prov":"Camarines Sur","reg":"Region V (Bicol Region)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.8326303,13.79768573]},"properties":{"pcode":"PH0501711","muni":"Caramoan","prov":"Camarines Sur","reg":"Region V (Bicol Region)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.6349637,13.86569754]},"properties":{"pcode":"PH0501714","muni":"Garchitorena","prov":"Camarines Sur","reg":"Region V (Bicol Region)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.3833713,13.58103678]},"properties":{"pcode":"PH0501725","muni":"Ocampo","prov":"Camarines Sur","reg":"Region V (Bicol Region)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.296623,14.01584251]},"properties":{"pcode":"PH0501735","muni":"Siruma","prov":"Camarines Sur","reg":"Region V (Bicol Region)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.1339853,13.60248181]},"properties":{"pcode":"PH0501713","muni":"Gainza","prov":"Camarines Sur","reg":"Region V (Bicol Region)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.0804771,7.912197987]},"properties":{"pcode":"PH1001321","muni":"City of Valencia","prov":"Bukidnon","reg":"Region XII (SOCCSKSARGEN)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.9962742,11.1445229]},"properties":{"pcode":"PH0603001","muni":"Ajuy","prov":"Iloilo","reg":"Region VI (Western Visayas)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.9973629,11.30238559]},"properties":{"pcode":"PH0603044","muni":"Sara","prov":"Iloilo","reg":"Region VI (Western Visayas)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.1189887,11.21887976]},"properties":{"pcode":"PH0603015","muni":"Concepcion","prov":"Iloilo","reg":"Region VI (Western Visayas)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.016826,11.46198823]},"properties":{"pcode":"PH0601911","muni":"Pilar","prov":"Capiz","reg":"Region VI (Western Visayas)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.807855,7.804655473]},"properties":{"pcode":"PH1001316","muni":"Pangantucan","prov":"Bukidnon","reg":"Region X (Northern Mindanao)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.3516701,7.813021171]},"properties":{"pcode":"PH1001318","muni":"San Fernando","prov":"Bukidnon","reg":"Region X (Northern Mindanao)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.1831198,8.159750153]},"properties":{"pcode":"PH1001312","muni":"City of Malaybalay (Capital)","prov":"Bukidnon","reg":"Region X (Northern Mindanao)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.8845168,6.478884052]},"properties":{"pcode":"PH1206306","muni":"City of Koronadal (Capital)","prov":"South Cotabato","reg":"Region XII (SOCCSKSARGEN)","org_count":1,"orgs":["Adventist Development and Relief Agency"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[119.4606628,10.82192794]},"properties":{"pcode":"PH1705320","muni":"Taytay","prov":"Palawan","reg":"Region IV-B (MIMAROPA)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.9585564,14.6741195]},"properties":{"pcode":"PH1307502","muni":"City of Malabon","prov":"Metropolitan Manila Third District","reg":"National Capital Region (NCR)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.060474,14.68049939]},"properties":{"pcode":"PH1307404","muni":"Quezon City","prov":"Metropolitan Manila Second District","reg":"National Capital Region (NCR)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.5770319,8.903162745]},"properties":{"pcode":"PH1600202","muni":"Butuan City (Capital)","prov":"Agusan del Norte","reg":"Region XIII (Caraga)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.3790464,8.844890334]},"properties":{"pcode":"PH1600201","muni":"Buenavista","prov":"Agusan del Norte","reg":"Region XIII (Caraga)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[125.5217395,8.432459849]},"properties":{"pcode":"PH1600309","muni":"San Luis","prov":"Agusan del Sur","reg":"Region XIII (Caraga)","org_count":1,"orgs":["ACCORD Inc."]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.1968217,6.644152966]},"properties":{"pcode":"PH1900708","muni":"Akbar","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.17149,6.48510174]},"properties":{"pcode":"PH1900709","muni":"Al-Barka","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.0986014,6.641488]},"properties":{"pcode":"PH1900702","muni":"City of Lamitan","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.277655,6.636304449]},"properties":{"pcode":"PH1900710","muni":"Hadji Mohammad Ajul","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.5897364,6.67479001]},"properties":{"pcode":"PH1900712","muni":"Hadji Muhtamad","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.8694134,6.619735562]},"properties":{"pcode":"PH1900703","muni":"Lantawan","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.9003964,6.515937614]},"properties":{"pcode":"PH1900704","muni":"Maluso","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.013117,6.488063943]},"properties":{"pcode":"PH1900705","muni":"Sumisip","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.982277,6.320593864]},"properties":{"pcode":"PH1900713","muni":"Tabuan-Lasa","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.1572355,6.523981518]},"properties":{"pcode":"PH1900706","muni":"Tipo-Tipo","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.2055378,6.601846293]},"properties":{"pcode":"PH1900707","muni":"Tuburan","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[122.1070967,6.507968592]},"properties":{"pcode":"PH1900711","muni":"Ungkaya Pukan","prov":"Basilan","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.5989621,7.759270067]},"properties":{"pcode":"PH1903637","muni":"Amai Manabilang (Bumbaran)","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1243648,7.887770472]},"properties":{"pcode":"PH1903601","muni":"Bacolod-Kalawi (Bacolod Grande)","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1474581,7.538161392]},"properties":{"pcode":"PH1903602","muni":"Balabagan","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1904474,7.77726091]},"properties":{"pcode":"PH1903604","muni":"Bayang","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1539576,7.794542534]},"properties":{"pcode":"PH1903605","muni":"Binidayan","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3932467,7.950629202]},"properties":{"pcode":"PH1903633","muni":"Buadiposo-Buntong","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.4579564,8.002616653]},"properties":{"pcode":"PH1903606","muni":"Bubong","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3658002,7.673841337]},"properties":{"pcode":"PH1903607","muni":"Butig","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.0777915,7.717872396]},"properties":{"pcode":"PH1903632","muni":"Calanogas","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1014758,7.806633221]},"properties":{"pcode":"PH1903609","muni":"Ganassi","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3704149,8.066111559]},"properties":{"pcode":"PH1903610","muni":"Kapai","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.188152,7.488369318]},"properties":{"pcode":"PH1903639","muni":"Kapatagan","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.4720741,7.784571358]},"properties":{"pcode":"PH1903611","muni":"Lumba-Bayabao (Maguing)","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2096935,7.728973121]},"properties":{"pcode":"PH1903641","muni":"Lumbaca-Unayan","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2356686,7.749552095]},"properties":{"pcode":"PH1903612","muni":"Lumbatan","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2816085,7.773287698]},"properties":{"pcode":"PH1903636","muni":"Lumbayanague","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.0696926,7.918736843]},"properties":{"pcode":"PH1903613","muni":"Madalum","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.0348467,7.87198496]},"properties":{"pcode":"PH1903614","muni":"Madamba","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1841002,7.630962584]},"properties":{"pcode":"PH1903631","muni":"Marogong","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3658368,7.793061156]},"properties":{"pcode":"PH1903618","muni":"Masiu","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3654201,7.917856264]},"properties":{"pcode":"PH1903619","muni":"Mulondo","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1202128,7.751094215]},"properties":{"pcode":"PH1903620","muni":"Pagayawan (Tatarikan)","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1666445,7.991892657]},"properties":{"pcode":"PH1903621","muni":"Piagapo","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[123.9734832,7.699683188]},"properties":{"pcode":"PH1903635","muni":"Picong (Sultan Gumander)","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3541984,7.831708724]},"properties":{"pcode":"PH1903622","muni":"Poona Bayabao (Gata)","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.043779,7.797880364]},"properties":{"pcode":"PH1903623","muni":"Pualas","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2533317,7.717903903]},"properties":{"pcode":"PH1903640","muni":"Sultan Dumalondong","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.4622039,8.092245701]},"properties":{"pcode":"PH1903638","muni":"Tagoloan II","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.168929,7.730648374]},"properties":{"pcode":"PH1903628","muni":"Tubaran","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1460204,7.905266358]},"properties":{"pcode":"PH1903629","muni":"Tugaya","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.322737,7.480215954]},"properties":{"pcode":"PH1908718","muni":"Barira","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.4253661,7.505015808]},"properties":{"pcode":"PH1908702","muni":"Buldon","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3675133,7.11851791]},"properties":{"pcode":"PH1908714","muni":"Kabuntalan (Tumbao)","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2421994,7.478021854]},"properties":{"pcode":"PH1908709","muni":"Matanog","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2512314,7.362272326]},"properties":{"pcode":"PH1908711","muni":"Parang","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3165255,7.254407003]},"properties":{"pcode":"PH1908712","muni":"Sultan Kudarat (Nuling)","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2716138,7.299797018]},"properties":{"pcode":"PH1908724","muni":"Sultan Mastura","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.8089048,6.696625217]},"properties":{"pcode":"PH1908803","muni":"Buluan","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.4747981,7.037428106]},"properties":{"pcode":"PH1908806","muni":"Datu Piang","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.4365354,6.954638353]},"properties":{"pcode":"PH1908826","muni":"Datu Saudi-Ampatuan","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3936247,6.889954761]},"properties":{"pcode":"PH1908827","muni":"Datu Unsay","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.4634704,6.891567529]},"properties":{"pcode":"PH1908808","muni":"Shariff Aguak (Maganoy) (Capital)","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.5079181,6.955407091]},"properties":{"pcode":"PH1908837","muni":"Shariff Saydona Mustapha","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2266563,6.822164779]},"properties":{"pcode":"PH1908817","muni":"South Upi","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.6321576,6.915905202]},"properties":{"pcode":"PH1908813","muni":"Sultan Sa Barongis (Lambayong)","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.8004185,6.752444193]},"properties":{"pcode":"PH1908833","muni":"Pandag","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3654501,6.929791274]},"properties":{"pcode":"PH1908825","muni":"Guindulungan","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.5664031,6.918568183]},"properties":{"pcode":"PH1908829","muni":"Rajah Buayan","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3055755,6.945989828]},"properties":{"pcode":"PH1908816","muni":"Talayan","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.9168419,6.228430313]},"properties":{"pcode":"PH1906606","muni":"Hadji Panglima Tahil (Marunggas)","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.9600629,5.993562816]},"properties":{"pcode":"PH1906601","muni":"Indanan","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.0042173,6.052996915]},"properties":{"pcode":"PH1906602","muni":"Jolo (Capital)","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.2814083,5.912315606]},"properties":{"pcode":"PH1906603","muni":"Kalingalan Caluang","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.8383294,5.686019617]},"properties":{"pcode":"PH1906617","muni":"Lugus","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.319788,5.966362724]},"properties":{"pcode":"PH1906604","muni":"Luuk","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.0101133,5.948651169]},"properties":{"pcode":"PH1906605","muni":"Maimbung","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.230559,5.982071996]},"properties":{"pcode":"PH1906607","muni":"Old Panamao","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.3933062,5.988578101]},"properties":{"pcode":"PH1906619","muni":"Omar","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.7038674,5.558291236]},"properties":{"pcode":"PH1906618","muni":"Pandami","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.180448,5.966216568]},"properties":{"pcode":"PH1906616","muni":"Panglima Estino (New Panamao)","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.4731728,6.220882893]},"properties":{"pcode":"PH1906608","muni":"Pangutaran","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.921388,5.935640573]},"properties":{"pcode":"PH1906609","muni":"Parang","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.167963,5.817745333]},"properties":{"pcode":"PH1906610","muni":"Pata","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.0866351,6.049087815]},"properties":{"pcode":"PH1906611","muni":"Patikul","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.8616129,5.537356259]},"properties":{"pcode":"PH1906612","muni":"Siasi","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.0934179,5.960780311]},"properties":{"pcode":"PH1906613","muni":"Talipao","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.9604564,5.710549652]},"properties":{"pcode":"PH1906614","muni":"Tapul","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.748677,6.049044074]},"properties":{"pcode":"PH1906615","muni":"Tongkil","prov":"Sulu","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[119.8177537,5.08902607]},"properties":{"pcode":"PH1907002","muni":"Bongao (Capital)","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.0905311,5.261466227]},"properties":{"pcode":"PH1907009","muni":"Languyan","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[118.4772991,7.008622943]},"properties":{"pcode":"PH1907003","muni":"Mapun (Cagayan de Tawi-Tawi)","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.0027069,5.139798319]},"properties":{"pcode":"PH1907001","muni":"Panglima Sugala (Balimbing)","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.2240394,5.090478838]},"properties":{"pcode":"PH1907010","muni":"Sapa-Sapa","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[119.4760333,4.780975239]},"properties":{"pcode":"PH1907011","muni":"Sibutu","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[119.8243389,4.865358135]},"properties":{"pcode":"PH1907004","muni":"Simunul","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[119.40246,4.748733103]},"properties":{"pcode":"PH1907005","muni":"Sitangkai","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.5612865,5.279537555]},"properties":{"pcode":"PH1907006","muni":"South Ubian","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.2405639,5.221783692]},"properties":{"pcode":"PH1907007","muni":"Tandubas","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[118.2190814,6.159390044]},"properties":{"pcode":"PH1907008","muni":"Turtle Islands","prov":"Tawi-Tawi","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":1,"orgs":["UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3547188,7.009907541]},"properties":{"pcode":"PH1908831","muni":"Datu Anggal Midtimbang","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.532258,6.817974019]},"properties":{"pcode":"PH1908828","muni":"Datu Abdullah Sangki","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.9055162,6.74277005]},"properties":{"pcode":"PH1908805","muni":"Datu Paglas","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.7438248,6.840916828]},"properties":{"pcode":"PH1908819","muni":"Gen. S.K. Pendatun","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.8399937,6.655327784]},"properties":{"pcode":"PH1908832","muni":"Mangudadatu","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.7777346,6.78503688]},"properties":{"pcode":"PH1908823","muni":"Paglat","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2966235,8.021222699]},"properties":{"pcode":"PH1903617","muni":"Marawi City (Capital)","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3536277,7.996217217]},"properties":{"pcode":"PH1903624","muni":"Ditsaan-Ramain","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3402717,7.898102954]},"properties":{"pcode":"PH1903627","muni":"Taraka","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1810798,7.921286426]},"properties":{"pcode":"PH1903603","muni":"Balindong (Watu)","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.0742708,7.627223335]},"properties":{"pcode":"PH1903615","muni":"Malabang","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.7063765,7.646683501]},"properties":{"pcode":"PH1903630","muni":"Wao","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.3326843,7.871762772]},"properties":{"pcode":"PH1903626","muni":"Tamparan","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Action Against Hunger","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.1164121,6.959643445]},"properties":{"pcode":"PH1908715","muni":"Upi","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":2,"orgs":["Plan International Pilipinas","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[121.0413952,14.58308727]},"properties":{"pcode":"PH1307401","muni":"City of Mandaluyong","prov":"Metropolitan Manila Second District","reg":"National Capital Region (NCR)","org_count":3,"orgs":["Acted","OCHA","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.7684947,7.062657874]},"properties":{"pcode":"PH1908822","muni":"Pagagawan","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":3,"orgs":["Action Against Hunger","UNFPA","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.4237946,6.785530201]},"properties":{"pcode":"PH1908801","muni":"Ampatuan","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":3,"orgs":["Action Against Hunger","UNFPA","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.479587,7.000503338]},"properties":{"pcode":"PH1908836","muni":"Datu Salibo","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":3,"orgs":["Action Against Hunger","Plan International Pilipinas","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2467623,8.042209305]},"properties":{"pcode":"PH1903625","muni":"Saguiaran","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":3,"orgs":["Action Against Hunger","Plan International Pilipinas","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2291033,7.962382917]},"properties":{"pcode":"PH1903616","muni":"Marantao","prov":"Lanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":3,"orgs":["Action Against Hunger","Plan International Pilipinas","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.7392088,6.969035112]},"properties":{"pcode":"PH1908810","muni":"Pagalungan","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":3,"orgs":["Plan International Pilipinas","UNFPA","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.0158627,6.912630562]},"properties":{"pcode":"PH1908730","muni":"Datu Blah T. Sinsuat","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":3,"orgs":["ACCORD Inc.","Plan International Pilipinas","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2358085,7.094712036]},"properties":{"pcode":"PH1908707","muni":"Datu Odin Sinsuat (Dinaig)","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":3,"orgs":["ACCORD Inc.","Plan International Pilipinas","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.5154427,6.920884127]},"properties":{"pcode":"PH1908820","muni":"Mamasapano","prov":"Maguindanao del Sur","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":4,"orgs":["Action Against Hunger","Plan International Pilipinas","UNFPA","UNICEF"]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[124.2314469,7.208622772]},"properties":{"pcode":"PH1908703","muni":"Cotabato City","prov":"Maguindanao del Norte","reg":"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)","org_count":5,"orgs":["Acted","Action Against Hunger","Plan International Pilipinas","UNFPA","UNICEF"]}}]};
+/* ===========================================================================
+   ORG_META — classification layer (NOT in the source GeoJSON, edit freely).
+   `type`     : org type for the pie chart. Standard classification.
+   `clusters` : clusters for the bar chart. PROVISIONAL — seeded from each org's
+                known mandate. Replace with the actual cluster assignments from
+                your 3W/5W so the bar chart reflects reported, not assumed, data.
+   Any org missing here falls back to type "Other" and no clusters.
+   =========================================================================== */
+const ORG_META = {
+  "UNICEF":                                   { type:"UN agency", clusters:["WASH","Nutrition","Education","Protection"] },
+  "UNFPA":                                    { type:"UN agency", clusters:["Protection","Health"] },
+  "OCHA":                                     { type:"UN agency", clusters:["Coordination"] },
+  "Action Against Hunger":                    { type:"INGO",      clusters:["Nutrition","Food Security & Agriculture","WASH"] },
+  "Acted":                                    { type:"INGO",      clusters:["WASH","Shelter","CCCM"] },
+  "Plan International Pilipinas":              { type:"INGO",      clusters:["Protection","Education","Food Security & Agriculture"] },
+  "Catholic Relief Services":                 { type:"INGO",      clusters:["Shelter","Food Security & Agriculture","WASH"] },
+  "Adventist Development and Relief Agency":  { type:"INGO",      clusters:["Shelter","Food Security & Agriculture","WASH"] },
+  "CFSI":                                     { type:"National NGO", clusters:["Protection","Education"] },
+  "ACCORD Inc.":                              { type:"National NGO", clusters:["Food Security & Agriculture","Protection","Early Recovery"] }
+};
+const TYPE_COLORS = { "UN agency":"#009EDB", "INGO":"#01304F", "National NGO":"#F2A900", "Other":"#9fb0ba" };
+
+const MAXC = 5, SQRT_MAX = 2.23606797749979;
+const RMIN = 6, RMAX = 26;
+// area-proportional radius: linear in sqrt(count)
+function radiusFor(c){ return RMIN + (Math.sqrt(c)-1)/(SQRT_MAX-1) * (RMAX-RMIN); }
+
+mapboxgl.accessToken = 'pk.eyJ1Ijoib2NoYS1yb2FwIiwiYSI6ImNrZXRhemIzMDIyZTEyeG85cXU1bGF1a2gifQ.9qTpr3IkhjPORrgGw8UEIg';
+const map = new mapboxgl.Map({
+  container:'map',
+  style:'mapbox://styles/ocha-roap/cmrhffvm8002s01rl9zzr28yh',
+  center:[122.5,12.2], zoom:5, minZoom:4, maxZoom:14
+});
+map.addControl(new mapboxgl.NavigationControl({showCompass:false}), 'top-right');
+map.addControl(new mapboxgl.ScaleControl({maxWidth:120, unit:'metric'}), 'bottom-right');
+
+map.on('load', ()=>{
+  map.addSource('op', {type:'geojson', data:DATA});
+
+  const radiusExpr = ['interpolate',['linear'],['sqrt',['get','org_count']],
+                       1, RMIN, SQRT_MAX, RMAX];
+
+  map.addLayer({
+    id:'op-circles', type:'circle', source:'op',
+    paint:{
+      'circle-radius':radiusExpr,
+      'circle-color':'#009EDB',
+      'circle-opacity':0.55,
+      'circle-stroke-color':'#01304F',
+      'circle-stroke-width':1,
+      'circle-stroke-opacity':0.9
+    }
+  });
+  // draw largest first so small ones sit on top and stay clickable
+  map.setLayoutProperty('op-circles','circle-sort-key',['*',-1,['get','org_count']]);
+
+  // fit to data
+  const b = new mapboxgl.LngLatBounds();
+  DATA.features.forEach(f=>b.extend(f.geometry.coordinates));
+  map.fitBounds(b, {padding:{top:60,bottom:60,left:360,right:40}, maxZoom:9, duration:0});
+
+  const popup = new mapboxgl.Popup({closeButton:true, maxWidth:'290px'});
+
+  map.on('click','op-circles', e=>{
+    const p = e.features[0].properties;
+    let orgs = p.orgs; try{ orgs = JSON.parse(p.orgs); }catch(_){}
+    const items = (Array.isArray(orgs)?orgs:[orgs]).map(o=>'<li>'+o+'</li>').join('');
+    const html = '<div class="pop-h">'+p.muni+'</div>'+
+                 '<div class="pop-s">'+(p.prov||'')+' · '+(p.reg||'')+'</div>'+
+                 '<div class="pop-count"><b>'+p.org_count+'</b> organization'+(p.org_count>1?'s':'')+' with physical presence</div>'+
+                 '<ul class="pop-orgs">'+items+'</ul>';
+    popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+  });
+  map.on('mouseenter','op-circles', ()=>map.getCanvas().style.cursor='pointer');
+  map.on('mouseleave','op-circles', ()=>map.getCanvas().style.cursor='');
+
+  buildSidebar(popup);
+});
+
+/* ---- sidebar charts + org filter ------------------------------------------ */
+function metaFor(org){ return ORG_META[org] || {type:"Other", clusters:[]}; }
+
+function buildSidebar(popup){
+  // Aggregate once from the features.
+  const feats = DATA.features;
+  const orgLocs = new Map();                       // org -> [feature,...]
+  feats.forEach(f=>{
+    let orgs = f.properties.orgs;
+    if(!Array.isArray(orgs)){ try{ orgs = JSON.parse(orgs); }catch(_){ orgs=[orgs]; } }
+    orgs.forEach(o=>{ if(!orgLocs.has(o)) orgLocs.set(o,[]); orgLocs.get(o).push(f); });
+  });
+  const orgs = [...orgLocs.keys()].sort((a,b)=>a.localeCompare(b));
+
+  // ---- pie: distinct orgs by type ----
+  const typeCounts = {};
+  orgs.forEach(o=>{ const t = metaFor(o).type; typeCounts[t] = (typeCounts[t]||0)+1; });
+  const typeOrder = ["UN agency","INGO","National NGO","Other"].filter(t=>typeCounts[t]);
+  renderPie(typeOrder.map(t=>({label:t, value:typeCounts[t], color:TYPE_COLORS[t]})), orgs.length);
+
+  // ---- bars: distinct orgs per cluster ----
+  const clusterCounts = {};
+  orgs.forEach(o=>metaFor(o).clusters.forEach(c=>{ clusterCounts[c]=(clusterCounts[c]||0)+1; }));
+  const clusters = Object.entries(clusterCounts).sort((a,b)=> b[1]-a[1] || a[0].localeCompare(b[0]));
+  renderBars(clusters);
+
+  // ---- pills: filter map by organization ----
+  renderPills(orgs, orgLocs, popup);
+}
+
+function renderPie(slices, total){
+  const R=48, C=52, INNER=26;                      // donut geometry
+  const svg = document.getElementById('pie');
+  let a=-Math.PI/2, paths='';
+  if(slices.length===1){                           // full ring can't be one arc
+    paths = `<circle cx="${C}" cy="${C}" r="${(R+INNER)/2}" fill="none" `+
+            `stroke="${slices[0].color}" stroke-width="${R-INNER}"><title>${slices[0].label}: ${slices[0].value}</title></circle>`;
+  } else slices.forEach(s=>{ const ang=(s.value/total)*Math.PI*2, e=a+ang;
+    const o1=[C+R*Math.cos(a), C+R*Math.sin(a)], o2=[C+R*Math.cos(e), C+R*Math.sin(e)];
+    const i2=[C+INNER*Math.cos(e), C+INNER*Math.sin(e)], i1=[C+INNER*Math.cos(a), C+INNER*Math.sin(a)];
+    const big=(e-a)>Math.PI?1:0;
+    paths += `<path d="M ${o1[0].toFixed(2)} ${o1[1].toFixed(2)} `+
+             `A ${R} ${R} 0 ${big} 1 ${o2[0].toFixed(2)} ${o2[1].toFixed(2)} `+
+             `L ${i2[0].toFixed(2)} ${i2[1].toFixed(2)} `+
+             `A ${INNER} ${INNER} 0 ${big} 0 ${i1[0].toFixed(2)} ${i1[1].toFixed(2)} Z" `+
+             `fill="${s.color}"><title>${s.label}: ${s.value}</title></path>`;
+    a=e; });
+  paths += `<text x="${C}" y="${C-3}" text-anchor="middle" font-size="19" font-weight="700" fill="#01304F">${total}</text>`+
+           `<text x="${C}" y="${C+11}" text-anchor="middle" font-size="8.5" letter-spacing=".04em" fill="#8a97a1">ORGS</text>`;
+  svg.innerHTML = paths;
+  document.getElementById('pie-leg').innerHTML = slices.map(s=>{
+    const pct = Math.round(s.value/total*100);
+    return `<div class="row"><span class="sw" style="background:${s.color}"></span>${s.label}`+
+           `<span class="v">${s.value}</span><span class="p">${pct}%</span></div>`; }).join('');
+}
+
+function renderBars(clusters){
+  const max = clusters.length ? clusters[0][1] : 1;
+  document.getElementById('bars').innerHTML = clusters.map(([name,n])=>
+    `<div class="bar"><span class="lbl">${name}</span><span class="val">${n}</span>`+
+    `<span class="track"><span class="fill" data-w="${Math.round(n/max*100)}"></span></span></div>`).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('#bars .fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+}
+
+function renderPills(orgs, orgLocs, popup){
+  const box = document.getElementById('pills');
+  const countEl = document.getElementById('pill-count');
+  const clearBtn = document.getElementById('pill-clear');
+  const selected = new Set();
+  const totalLoc = DATA.features.length;
+
+  box.innerHTML = orgs.map(o=>
+    `<button class="pill" data-org="${o.replace(/"/g,'&quot;')}">${o}`+
+    `<span class="badge">${orgLocs.get(o).length}</span></button>`).join('');
+
+  function apply(){
+    if(selected.size===0){
+      map.setFilter('op-circles', null);
+      countEl.textContent = `${totalLoc} locations · ${orgs.length} organizations`;
+      clearBtn.disabled = true;
+    } else {
+      const keep = new Set();
+      selected.forEach(o=>orgLocs.get(o).forEach(f=>keep.add(f.properties.pcode)));
+      map.setFilter('op-circles', ['in', ['get','pcode'], ['literal', [...keep]]]);
+      countEl.textContent = `${keep.size} location${keep.size!==1?'s':''} · ${selected.size} selected`;
+      clearBtn.disabled = false;
+      // keep largest-first draw order under the filter
+      map.setLayoutProperty('op-circles','circle-sort-key',['*',-1,['get','org_count']]);
+    }
+    if(popup) popup.remove();
+  }
+
+  box.querySelectorAll('.pill').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const o = btn.dataset.org;
+      if(selected.has(o)){ selected.delete(o); btn.classList.remove('on'); }
+      else { selected.add(o); btn.classList.add('on'); }
+      apply();
+    });
+  });
+  clearBtn.addEventListener('click', ()=>{
+    selected.clear();
+    box.querySelectorAll('.pill.on').forEach(b=>b.classList.remove('on'));
+    apply();
+  });
+  apply();
+}
+
+// build proportional-circle legend
+(function(){
+  const vals = [1, 3, MAXC];
+  const box = document.getElementById('legcircles');
+  const maxR = radiusFor(MAXC);
+  const baseY = 62;               // baseline (bottom of largest circle area)
+  vals.slice().reverse().forEach(v=>{
+    const r = radiusFor(v), d = r*2;
+    const c = document.createElement('div');
+    c.className='c'; c.style.width=d+'px'; c.style.height=d+'px';
+    c.style.left=(8 + (maxR-r))+'px';       // bottom-aligned nesting
+    c.style.bottom='0px';
+    box.appendChild(c);
+    const tick=document.createElement('div');
+    tick.className='tick'; tick.style.width=(maxR*2+18)+'px';
+    tick.style.bottom=(d)+'px';
+    box.appendChild(tick);
+    const lbl=document.createElement('div');
+    lbl.className='lbl'; lbl.textContent=v;
+    lbl.style.left=(8+maxR*2+22)+'px'; lbl.style.bottom=(d-7)+'px';
+    box.appendChild(lbl);
+  });
+})();
+</script>
+</body>
+</html>
