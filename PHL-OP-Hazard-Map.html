@@ -14,13 +14,18 @@
    max-height:calc(100vh - 28px);overflow-y:auto;background:#fff;border-top:4px solid var(--un-blue);
    box-shadow:0 2px 12px rgba(1,48,79,.18);padding:14px 16px 14px;}
  .panel .brand{display:block;height:26px;width:auto;margin:2px 0 9px;}
- .panel h1{font-size:15.5px;font-weight:700;margin:0 0 2px;color:var(--navy);line-height:1.25;}
+ .panel h1{font-size:21px;font-weight:700;margin:0 0 4px;color:var(--navy);line-height:1.18;
+   letter-spacing:-.01em;}
  .panel .sub{font-size:11.5px;color:#4a5a66;margin:0 0 10px;}
+ .src{font-size:9.3px;color:#9aa7b0;margin:7px 0 0;line-height:1.4;}
  .stats{display:flex;gap:12px;margin:6px 0 12px;}
  .stat .n{font-size:19px;font-weight:700;color:var(--un-blue);line-height:1;}
  .stat .l{font-size:9.5px;text-transform:uppercase;letter-spacing:.03em;color:#6b7883;margin-top:3px;}
  .sec{border-top:1px solid #eef2f4;padding-top:10px;margin-top:4px;}
- .sec-t{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--navy);margin-bottom:8px;}
+ .sec-t{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;}
+ .allbox{margin-left:auto;display:flex;align-items:center;gap:5px;cursor:pointer;
+   font-size:9.5px;font-weight:500;letter-spacing:.02em;color:#6b7883;}
+ .allbox input{width:13px;height:13px;cursor:pointer;accent-color:var(--un-blue);margin:0;}
  .lyr{display:flex;align-items:center;gap:9px;font-size:12.5px;cursor:pointer;padding:3px 0;}
  .lyr input{cursor:pointer;width:15px;height:15px;accent-color:var(--un-blue);}
  .lyr .dot{width:14px;height:14px;border-radius:50%;flex:none;}
@@ -91,7 +96,7 @@
    <div class="stat"><div class="n">429</div><div class="l">Disaster events</div></div>
  </div>
 
- <div class="sec"><div class="sec-t">Layers</div>
+ <div class="sec"><div class="sec-t">Layers<label class="allbox" title="Show or hide every layer in this section"><input type="checkbox" id="tgl-all"><span>All</span></label></div>
    <label class="lyr"><input type="checkbox" id="tgl-orgs" checked>
      <span class="dot" style="background:#009EDB;opacity:.6;border:1.4px solid #01304F;"></span>
      <span>Organizations</span><span class="desc">size = # orgs</span></label>
@@ -113,13 +118,13 @@
    <label class="lyr"><input type="checkbox" id="tgl-5w" checked>
      <span class="dot" style="background:#1B9E77;opacity:.75;border:1.4px solid #0e5c46;"></span>
      <span>5W response</span><span class="desc">size = # orgs</span></label>
+   <p class="src">Operational presence and 5W: OCHA Philippines &middot; Disaster events: EM-DAT, CRED / UCLouvain &middot; Sarangani earthquake: NDRRMC SitRep No. 21, 30 Jun 2026</p>
  </div>
 
  <div class="sec"><div class="sec-t">Anticipatory Action: Tropical Storms</div>
    <label class="lyr"><input type="checkbox" id="tgl-aa" checked>
      <img src="data:image/png;base64,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" alt="" style="width:15px;height:12.5px;flex:none;">
      <span>Covered provinces</span><span class="tc">13</span></label>
-   <p style="font-size:9.8px;color:#8a97a1;margin:6px 0 0;line-height:1.45;">Bicol (5), Eastern Visayas (5) and Caraga (3). One icon per province, placed within the province; click for details.</p>
  </div>
 
  <div class="sec"><div class="sec-t">Geological hazards</div>
@@ -132,7 +137,7 @@
    <label class="lyr"><input type="checkbox" id="tgl-fault" checked>
      <span class="fsw"></span>
      <span>Active faults</span><span class="tc">2,000</span></label>
-   <p style="font-size:9.8px;color:#8a97a1;margin:6px 0 0;line-height:1.45;">Strongest earthquakes are M6.7+ events since 2000, sized by magnitude; click for magnitude, depth and date. Volcanoes listed as active by DOST–PHIVOLCS; click a marker for name and coordinates. Active fault traces (fccode 01) from the DOST–PHIVOLCS ActiveFault service. <b>Incomplete:</b> the export hit the service record limit, so some active faults are missing.</p>
+   <p class="src">DOST&ndash;PHIVOLCS &middot; USGS</p>
  </div>
 
  <div class="sec dim" id="popsec"><div class="sec-t">Population &mdash; WorldPop 2020</div>
@@ -140,7 +145,7 @@
      <i style="background:#EDF8B1"></i><i style="background:#C7E9B4"></i><i style="background:#7FCDBB"></i><i style="background:#41B6C4"></i><i style="background:#1D91C0"></i><i style="background:#225EA8"></i><i style="background:#0C2C84"></i>
    </div>
    <div class="ramptick"><span>1</span><span>5</span><span>25</span><span>100</span><span>500</span><span>2.5k</span><span>10k+</span></div>
-   <p style="font-size:9.8px;color:#8a97a1;margin:7px 0 0;line-height:1.45;">People per grid cell (&asymp;1&nbsp;km&sup2;). 109.6&nbsp;million across 373,131 populated cells; cells under 1 person are left clear.</p>
+   <p class="src">WorldPop 2020, UN-adjusted &middot; doi:10.5258/SOTON/WP00671 &middot; CC BY 4.0</p>
  </div>
 
  <div class="sec"><div class="sec-t">El Ni&ntilde;o dry outlook — to end-Dec 2026</div>
@@ -149,6 +154,7 @@
      <div class="typerow"><span class="sw" style="background:#FFFF8C"></span><span class="tname" title="2 consecutive months of below normal rainfall">Dry Condition</span><span class="tc">32</span></div>
      <div class="typerow"><span class="sw" style="background:#FFFFFF;border:1px solid #c9d3da"></span><span class="tname">Not Affected</span><span class="tc">3</span></div>
    </div>
+   <p class="src">PAGASA, issued 22 Jun 2026</p>
  </div>
 
  <div class="sec" id="stormsec"><div class="sec-t">Storm track intensity — click to filter</div>
@@ -188,6 +194,7 @@
    <div class="yrtick"><span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span></div>
 
    <div class="sfoot"><span id="yrcount">925 storms</span><span class="rst" id="yrreset">reset</span></div>
+   <p class="src">IBTrACS v04r01, NOAA NCEI &middot; area of responsibility: PAGASA</p>
  </div>
 
  <div class="sec"><div class="sec-t">Disaster type — click to filter</div>
@@ -212,6 +219,7 @@
       <span class="sw" style="background:#969696"></span><span class="tname">Other</span><span class="tc">34</span></label>
 
    </div>
+   <p class="src">EM-DAT, CRED / UCLouvain</p>
  </div>
 
  <div class="sec"><div class="sec-t">5W response — filter by disaster</div>
@@ -245,6 +253,7 @@
 <label class="typerow"><input type="checkbox" class="dischk" value="Other" checked>
       <span class="tname" title="Other">Other</span><span class="tc">24</span></label>
    </div>
+   <p class="src">5W Consolidated Data, OCHA Philippines</p>
  </div>
 
  <div class="sec"><div class="sec-t">Circle size</div>
@@ -256,7 +265,7 @@
    </div>
  </div>
 
- <p class="note">All circles are area-proportional to affected people (√ scale); the smallest are floored to a minimum size for visibility. The three affected-people legends use independent scales. Sarangani earthquake shows persons affected by city/municipality (NDRRMC SitRep No. 21, 30 Jun 2026); historical events show Total Affected (EM-DAT, CRED / UCLouvain). The Organizations and 5W layers both size circles by number of organizations and share one common scale, so they can be compared directly; the 5W layer counts distinct organizations responding per city/municipality; use the disaster checkboxes to recompute it for selected responses (5W Consolidated Data, OCHA Philippines). 32 EM-DAT records lacking coordinates or affected figures are not shown. Storm tracks show all 925 tropical cyclones recorded over the Philippines between 1884 and 2024, coloured, weighted and ordered by the peak Saffir–Simpson intensity each one reached inside the country. Which cyclones appear, and every intensity, wind, date and month figure attached to them, come from the fixes that fall inside Philippine territory; the track geometry comes from the full western-Pacific best-track archive (IBTrACS v04r01, NOAA NCEI), so cyclones that crossed PAR without reaching the Philippines are not shown. Six 2024 storms — Ewiniar, Yagi, Trami, Toraji, Man-Yi and Usagi — were still provisional when the Philippine extract was made and were matched to their finalised archive tracks by name and season. Each track is the cyclone's full best-track path clipped to the PAGASA Philippine Area of Responsibility (dashed outline: 5°N 115°E, 15°N 115°E, 21°N 120°E, 25°N 120°E, 25°N 135°E, 5°N 135°E), so it runs from where the storm entered PAR to where it left and shows the approach and exit either side of landfall, cut at the boundary rather than at the coastline. Tracks are drawn through gaps of up to 12 hours in the early records and split into separate segments beyond that, or where a cyclone left PAR and re-entered. Intensity is IBTrACS <i>usa_sshs</i>, which is unavailable for 447 storms (shown as Not classified) — 309 of them from before 1945, when no aircraft or satellite intensity estimates existed, so the early decades understate how strong these cyclones were and cannot be compared with recent ones. Counts of weaker storms also rise over time as observation improved, so the season slider shows changes in the record as much as changes in the climate. The month filter and its histogram use the month in which a cyclone first appeared over the Philippines; 19 of the 925 tracks straddle two months and are counted under the first.The El Niño layer shows the PAGASA dry-condition outlook to end-December 2026 (issued 22 Jun 2026; basis: Dec 2025–21 Jun 2026 observed and Jul–Dec 2026 forecast rainfall) by province/adm2, using PAGASA's own class colours; boundaries are simplified for file size, and City of Isabela and the Special Geographic Area were not enumerated by PAGASA (classification inherited from Basilan and Cotabato respectively). Active volcano markers show the 24 volcanoes listed as active by DOST–PHIVOLCS (Volcanoes of the Philippines, compiled 15 Jul 2026); markers are anchored at the summit coordinates and are drawn without collision suppression, so closely spaced pairs such as Babuyan Claro and Smith overlap at low zoom. Active fault lines are vector traces classified Active (fccode 01) from the DOST–PHIVOLCS ActiveFault ArcGIS service. This extract contains 2,000 features and is flagged by the service as truncated (exceededTransferLimit), so an unknown number of active faults are not shown; potentially active faults (fccode 02) and trenches are excluded by design. Strongest earthquakes are the 30 magnitude 6.7+ events recorded in the Philippines, the Philippine Islands region or immediately offshore since 2000 (epicentre coordinates; magnitudes are preferred values and may differ slightly between USGS and PHIVOLCS); marker size scales with magnitude. These are epicentres of the largest events and are distinct from the Disaster events layer, which shows EM-DAT earthquakes sized by people affected. Anticipatory action shows the 13 provinces listed as covered — Bicol (Albay, Camarines Sur, Camarines Norte, Catanduanes, Sorsogon), Eastern Visayas (Eastern Samar, Northern Samar, Samar, Leyte, Southern Leyte) and Caraga (Surigao del Norte, Surigao del Sur, Dinagat Islands). One icon marks each province at a point inside its largest landmass; it denotes province-wide coverage, not a specific site. Province boundaries follow COD-AB, which places the Surigao/Dinagat provinces in Region XIII (Caraga). Population is the WorldPop 2020 UN-adjusted constrained estimate at 30 arc-second resolution (about 1 km at the equator), 373,131 populated cells totalling 109.6 million people, drawn under the basemap labels and classed on fixed breaks rather than stretched, so the legend colours mean the same thing at every zoom; the 4,340 cells holding less than one person are left transparent. The grid is equirectangular and has been resampled into Web Mercator for display, so it registers against the coastline. WorldPop, School of Geography and Environmental Science, University of Southampton; www.worldpop.org, doi:10.5258/SOTON/WP00671, CC BY 4.0. Basemap © Mapbox © OpenStreetMap · OCHA ROAP.</p>
+ <p class="note"><i>The boundaries and names shown and the designations used on this map do not imply official endorsement or acceptance by the United Nations.</i></p>
 </div>
 
 <script>
@@ -664,6 +673,27 @@ map.on('load',()=>{
     map.setLayoutProperty('fivew-circles','visibility',on?'visible':'none');
     document.getElementById('dislist').classList.toggle('dim',!on);
   });
+  // master switch for the Layers section; indeterminate while the set is mixed
+  const LAYER_TOGGLES=['tgl-orgs','tgl-dis','tgl-eq','tgl-pop','tgl-elnino','tgl-storm','tgl-5w'];
+  const allBox=document.getElementById('tgl-all');
+  const syncAll=()=>{
+    const on=LAYER_TOGGLES.filter(id=>document.getElementById(id).checked).length;
+    allBox.checked=on===LAYER_TOGGLES.length;
+    allBox.indeterminate=on>0&&on<LAYER_TOGGLES.length;
+  };
+  allBox.addEventListener('change',()=>{
+    // latch the target first: each toggle's own syncAll runs mid-loop and would
+    // otherwise rewrite allBox.checked before the rest have been visited
+    const want=allBox.checked;
+    LAYER_TOGGLES.forEach(id=>{
+      const c=document.getElementById(id);
+      if(c.checked!==want){c.checked=want;c.dispatchEvent(new Event('change'));}
+    });
+    syncAll();
+  });
+  LAYER_TOGGLES.forEach(id=>document.getElementById(id).addEventListener('change',syncAll));
+  syncAll();
+
   document.querySelectorAll('.dischk').forEach(chk=>{
     chk.addEventListener('change',()=>{
       chk.checked?active5w.add(chk.value):active5w.delete(chk.value);
