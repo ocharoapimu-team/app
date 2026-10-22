@@ -1,0 +1,357 @@
+{
+ "iso": "SLB",
+ "name": "Solomon Islands",
+ "headline": "Solomon Islands is in Tier 1 (high concern) of the 28 August regional snapshot, with very high concern for drier-than-normal conditions over September–November 2026 and a convergence of climate and price risk. Parts of the country recorded extreme or exceptional drought over the 90 days to 11 July, and by October SPC reported declining purse-seine tuna catches. Recovery from Tropical Cyclone Maila, which affected an estimated 150,000 people in the first half of 2026, was constrained by funding.",
+ "as_of": "2026-10-19",
+ "classification": {
+  "tier": "Tier 1 — high concern",
+  "pathway": "Convergence (climate × price shock)",
+  "climate": "Very high — drier, Sep–Nov 2026",
+  "three_fs": "",
+  "iasc": "",
+  "other_lists": [
+   "Tier 1 — highest concern (drier from Aug 2026, peak Nov–Dec) — FAO/OCHA/WMO/WFP June snapshot, 17 Jun 2026",
+   "Dry-conditions focus country, high priority for potential humanitarian challenges through December 2026 — OCHA ROAP pre-onset list, 20 May 2026",
+   "One of sixteen countries particularly vulnerable because of high agricultural dependence — IFRC factsheet (produced Jul 2026, published 21 Sep 2026)",
+   "Drought very likely across Melanesia (PNG, Solomon Islands, Vanuatu, Fiji) — IFRC / Red Cross Red Crescent Climate Centre briefing (undated; content indicates Jun–Jul 2026)",
+   "Historical susceptibility: High on the drought side, Moderate on the wet side (eight El Niño + positive IOD events, 1982–2024) — FAO/WFP/UN Women/WMO/OCHA snapshot, 28 Aug 2026"
+  ]
+ },
+ "key_figures": [
+  {
+   "value": "150,000",
+   "unit": "",
+   "label": "people estimated affected by Tropical Cyclone Maila, including 67,000 children (first half of 2026)",
+   "source": "UNICEF EAPRO, 30 Jun 2026",
+   "critical": true
+  },
+  {
+   "value": "31,000",
+   "unit": "",
+   "label": "people requiring urgent assistance after Tropical Cyclone Maila",
+   "source": "UNICEF EAPRO, 30 Jun 2026",
+   "critical": true
+  },
+  {
+   "value": "11,000+",
+   "unit": "",
+   "label": "children with education disrupted after Tropical Cyclone Maila; 84 schools damaged, 16 rendered unusable",
+   "source": "UNICEF EAPRO, 30 Jun 2026",
+   "critical": false
+  },
+  {
+   "value": "SBD17.5",
+   "unit": "M+",
+   "label": "needs identified at 12 severely damaged schools (US$2.2 million)",
+   "source": "UNICEF EAPRO, 30 Jun 2026",
+   "critical": false
+  },
+  {
+   "value": "10,000",
+   "unit": "",
+   "label": "people covered by joint planning for recovery cash assistance; funding constraints prevented transfers in the reporting period",
+   "source": "UNICEF EAPRO, 30 Jun 2026",
+   "critical": false
+  }
+ ],
+ "hazard_outlook": [
+  {
+   "window": "Jun–Dec 2026",
+   "text": "The Solomon Islands Meteorological Service declared El Niño conditions active, with below-normal rainfall and elevated drought risk for June–December 2026 (as recorded by IFRC, 6 Jul 2026)."
+  },
+  {
+   "window": "Jul–Sep 2026",
+   "text": "Earth Sciences New Zealand's Island Climate Update #309 placed Solomon Islands on the drier-than-normal side of the El Niño rainfall dipole."
+  },
+  {
+   "window": "Sep–Nov 2026",
+   "text": "The FAO/WFP/UN Women/WMO/OCHA snapshot of 28 August rates Solomon Islands at very high concern for drier conditions; the June snapshot had put the peak in November–December."
+  },
+  {
+   "window": "Nov 2026–Apr 2027",
+   "text": "For the cyclone season, COSPPac and SPREP expect cyclone genesis to shift eastward, away from the Coral Sea, Solomon Islands, Vanuatu, New Caledonia and Fiji, toward Niue, the Cook Islands and parts of Polynesia (Fiji Times, 10 Sep 2026; PINA, 15 Jun 2026)."
+  }
+ ],
+ "timeline": [
+  {
+   "date": "2026-04",
+   "label": "Apr 2026",
+   "event": "Tropical Cyclone Maila affects an estimated 150,000 people in Solomon Islands, including 67,000 children, with 31,000 requiring urgent assistance.",
+   "source": "UNICEF EAPRO"
+  },
+  {
+   "date": "2026-05-20",
+   "label": "20 May 2026",
+   "event": "OCHA ROAP lists Solomon Islands among dry-conditions countries of high priority for potential humanitarian challenges through December 2026.",
+   "source": "OCHA ROAP"
+  },
+  {
+   "date": "2026-06-12",
+   "label": "12 Jun 2026",
+   "event": "SPREP El Niño advisory names Solomon Islands among about 20 Pacific areas likely to see drought and below-normal rainfall.",
+   "source": "SPREP, via Pacific Island Times"
+  },
+  {
+   "date": "2026-06-13",
+   "label": "13 Jun 2026",
+   "event": "Over the 90 days to 13 June, seriously dry to extreme/exceptional drought conditions affected parts of Solomon Islands.",
+   "source": "Earth Sciences New Zealand (ICU #309)"
+  },
+  {
+   "date": "2026-06-17",
+   "label": "17 Jun 2026",
+   "event": "June regional snapshot places Solomon Islands in Tier 1 — highest concern, drier from August 2026 with a peak in November–December.",
+   "source": "FAO/OCHA/WMO/WFP"
+  },
+  {
+   "date": "2026-07-06",
+   "label": "By 6 Jul 2026",
+   "event": "Solomon Islands Meteorological Service declares El Niño conditions active, with below-normal rainfall and elevated drought risk for June–December 2026.",
+   "source": "IFRC"
+  },
+  {
+   "date": "2026-07-11",
+   "label": "11 Jul 2026",
+   "event": "Over the 90 days to 11 July, extreme or exceptional drought (USDM) affected parts of Solomon Islands.",
+   "source": "Earth Sciences New Zealand (ICU #310)"
+  },
+  {
+   "date": "2026-08-28",
+   "label": "28 Aug 2026",
+   "event": "Regional snapshot keeps Solomon Islands in Tier 1 — high concern (convergence), at very high climate concern for drier conditions over September–November.",
+   "source": "FAO/WFP/UN Women/WMO/OCHA"
+  },
+  {
+   "date": "2026-09-23",
+   "label": "23 Sep 2026",
+   "event": "ADB lowers its growth forecast for Solomon Islands (commodities, capital spending) as it cuts Pacific growth on El Niño grounds.",
+   "source": "ADB"
+  },
+  {
+   "date": "2026-10-06",
+   "label": "6 Oct 2026",
+   "event": "UNICEF names Solomon Islands among countries expected to see drier conditions, with agricultural drought and water scarcity raising displacement and acute-malnutrition risk.",
+   "source": "UNICEF EAPRO"
+  },
+  {
+   "date": "2026-10-19",
+   "label": "19 Oct 2026",
+   "event": "SPC reports commercial purse-seine tuna catches declining in Solomon Islands as tuna shift eastward.",
+   "source": "PINA/SPC"
+  }
+ ],
+ "impacts": [
+  {
+   "sector": "Water",
+   "points": [
+    "Parts of Solomon Islands recorded seriously dry to extreme/exceptional drought over the 90 days to 13 June 2026 (Earth Sciences NZ, ICU #309, Jul 2026).",
+    "Extreme or exceptional drought (USDM) was recorded in parts of Solomon Islands over the 90 days to 11 July 2026 (Earth Sciences NZ, ICU #310, Aug 2026).",
+    "SPREP's 12 June advisory flagged water shortage, reduced crop yields, wildfires and food-security and livelihood stress for the areas it listed as likely to see drought, including Solomon Islands (Pacific Island Times, 13 Jul 2026)."
+   ]
+  },
+  {
+   "sector": "Food security",
+   "points": [
+    "UNICEF expects agricultural drought and water scarcity in drier countries including Solomon Islands to raise displacement and acute-malnutrition risk (UNICEF EAPRO, 6 Oct 2026).",
+    "IFRC places the primary risk period in the key planting and crop-development stages of late 2026 and early 2027, if drought intensifies (IFRC, published 21 Sep 2026)."
+   ]
+  },
+  {
+   "sector": "Livelihoods",
+   "points": [
+    "Commercial purse-seine catches are declining in Solomon Islands as tuna move east, reducing earnings from fishing licences and commercial fishing; local fishers travel farther, spending more on fuel (PINA/SPC, 19 Oct 2026).",
+    "SPREP had earlier expected reduced tuna access for western Pacific states including Solomon Islands (APAC scorecard, 27 Jul 2026)."
+   ]
+  },
+  {
+   "sector": "Economy and prices",
+   "points": [
+    "ADB lowered its Solomon Islands growth forecast (commodities, capital spending) and cut Pacific growth to 3.0% for 2026 from 3.3%, the only subregion cut on El Niño grounds (ADB, 23 Sep 2026).",
+    "ADB raised Pacific inflation to 4.6% for 2026 from 4.2% (ADB, 23 Sep 2026)."
+   ]
+  },
+  {
+   "sector": "Education",
+   "points": [
+    "Tropical Cyclone Maila disrupted education for more than 11,000 children; 84 schools were damaged, 16 of them rendered unusable (UNICEF EAPRO, 30 Jun 2026).",
+    "Engineering assessments at 12 severely damaged schools identified more than 17.5 million SBD (US$2.2 million) in needs (UNICEF EAPRO, 30 Jun 2026)."
+   ]
+  }
+ ],
+ "response": [
+  {
+   "actor": "Government",
+   "points": [
+    "The Solomon Islands Meteorological Service declared El Niño conditions active, with below-normal rainfall and elevated drought risk for June–December 2026 (IFRC, 6 Jul 2026).",
+    "Government planning for shock-responsive cash after Tropical Cyclone Maila ran with the National Cash Working Group and national and provincial disaster committees (UNICEF EAPRO, 30 Jun 2026)."
+   ]
+  },
+  {
+   "actor": "UN and humanitarian partners",
+   "points": [
+    "UNICEF supported the National Cash Working Group and advocated for increased cash assistance to families with children; joint planning for recovery assistance to 10,000 people continued (UNICEF EAPRO, 30 Jun 2026).",
+    "UNICEF is refining its subnational Children's Climate Risk Index and Disaster Risk Model for Solomon Islands and plans a grassroots preparedness initiative supporting 10 to 15 local organisations in the country (UNICEF EAPRO, 30 Jun 2026).",
+    "The Red Cross Red Crescent was monitoring drought and rainfall extremes affecting water security and food production in Solomon Islands as of July 2026 (IFRC, published 21 Sep 2026)."
+   ]
+  },
+  {
+   "actor": "Financing and anticipatory action",
+   "points": [
+    "Funding constraints prevented post-Maila cash transfers in Solomon Islands during January–June 2026 (UNICEF EAPRO, 30 Jun 2026).",
+    "As of July 2026 no Red Cross Red Crescent Early Action Protocol for drought was active anywhere in Asia-Pacific (IFRC, published 21 Sep 2026)."
+   ]
+  }
+ ],
+ "history": [
+  "In a past powerful El Niño (event year not stated in the source), Solomon Islands was among Pacific countries with worsening drought, as up to 4.7 million people across the Pacific faced hunger, poverty and disease (Oxfam, past-event account).",
+  "Across eight El Niño events paired with positive IODs (1982/83 to 2023/24), Solomon Islands ranks High for below-average rainfall and Moderate for above-average rainfall (FAO/WFP/UN Women/WMO/OCHA, 28 Aug 2026)."
+ ],
+ "cautions": [
+  "COSPPac's September list of countries expecting below-normal rainfall (Fiji Times, 10 Sep 2026) does not name Solomon Islands, while ICU #309/#310, the EAR Watch, SPREP's June advisory and the 28 August snapshot all place it on the dry side.",
+  "Sources differ on tuna losses: SPREP expected reduced access for Fiji, Solomon Islands, Vanuatu and Samoa (27 Jul 2026), while SPC's observed list is PNG, Solomon Islands and FSM (19 Oct 2026); the two overlap only on Solomon Islands, and SPC's is the observed reading.",
+  "Tropical Cyclone Maila figures are cyclone impacts from the first half of 2026, not El Niño impacts; the 28 August snapshot cautions that an impact coinciding with El Niño should not automatically be treated as an El Niño impact.",
+  "Solomon Islands does not appear in any tier of the IASC ENSO Cell table reproduced in IOM's August 2026 appeal, and the 28 August snapshot provides no Solomon Islands 3FS level; the snapshot also states it does not fully capture country-specific compounding risks.",
+  "The Pacific Islands EAR Watch is an inter-agency met-service product marked not for public redistribution."
+ ],
+ "sources": [
+  {
+   "key": "FAO/WFP/UN Women/WMO/OCHA 2026-08-28",
+   "url": "https://reliefweb.int/report/indonesia/asia-and-pacific-snapshot-el-nino-middle-east-crisis-28-august-2026",
+   "publisher": "FAO, WFP, UN Women, WMO & OCHA",
+   "title": "Asia and the Pacific: Snapshot of El Niño, Indian Ocean Dipole & Middle East Crisis (as of 28 August 2026; covers Sep–Nov 2026)",
+   "date": "2026-08-28"
+  },
+  {
+   "key": "FAO/OCHA/WMO/WFP 2026",
+   "url": "https://www.unocha.org/asia-and-pacific",
+   "publisher": "FAO, OCHA, WMO & WFP",
+   "title": "Asia and the Pacific: Snapshot of El Niño & Middle East Crisis (as of 12 June 2026)",
+   "date": "2026-06-17"
+  },
+  {
+   "key": "OCHA ROAP 2026",
+   "url": "https://www.unocha.org/asia-and-pacific",
+   "publisher": "OCHA Regional Office for Asia and the Pacific",
+   "title": "Asia and the Pacific: El Niño Overview and Possible Impacts in 2026-2027",
+   "date": "2026-05-20"
+  },
+  {
+   "key": "IOM Appeal (full) 2026",
+   "url": "https://www.iom.int/",
+   "publisher": "IOM",
+   "title": "IOM Appeal: Acting Early on El Niño-Related Mobility Risks, August 2026 – July 2027",
+   "date": "2026-08"
+  },
+  {
+   "key": "IFRC factsheet 2026",
+   "url": "https://preparecenter.org/resource/el-nino-outlook-for-asia-pacific-2026-2027-hazards-vulnerability-and-rcrc-response/",
+   "publisher": "IFRC (via Global Disaster Preparedness Center)",
+   "title": "El Niño Outlook for Asia Pacific 2026–2027: Hazards, Vulnerability, and RCRC Response (produced July 2026)",
+   "date": "2026-09-21"
+  },
+  {
+   "key": "IFRC factsheet (full, 6 Jul) 2026",
+   "url": "https://preparecenter.org/resource/el-nino-outlook-for-asia-pacific-2026-2027-hazards-vulnerability-and-rcrc-response/",
+   "publisher": "IFRC Asia Pacific",
+   "title": "El Niño in Asia Pacific: 2026/2027 (internal RCRC factsheet, as of 06 July 2026)",
+   "date": "2026-07-06"
+  },
+  {
+   "key": "IFRC briefing 2026",
+   "url": "https://www.ifrc.org/",
+   "publisher": "IFRC Asia Pacific / Red Cross Red Crescent Climate Centre",
+   "title": "El Niño 2026-2027 Asia Pacific Region (network briefing deck; undated, content indicates June–July 2026)",
+   "date": ""
+  },
+  {
+   "key": "Earth Sciences NZ ICU 2026",
+   "url": "https://niwa.co.nz/climate/island-climate-update",
+   "publisher": "Earth Sciences New Zealand (NIWA)",
+   "title": "Island Climate Update, Issue 309, July 2026",
+   "date": "2026-07"
+  },
+  {
+   "key": "Earth Sciences NZ ICU #310 2026",
+   "url": "https://niwa.co.nz/climate/island-climate-update",
+   "publisher": "Earth Sciences New Zealand (NIWA)",
+   "title": "Island Climate Update, Issue 310, August 2026",
+   "date": "2026-08"
+  },
+  {
+   "key": "Pacific Island Times 2026",
+   "url": "https://islandsbusiness.com/pacnews/pacnews-three-13-july-2026/",
+   "publisher": "Pacific Island Times (in PACNEWS THREE)",
+   "title": "El Niño is underway… + SPREP/FSM statements",
+   "date": "2026-07-13"
+  },
+  {
+   "key": "PINA/SPREP 2026-06-15",
+   "url": "https://pina.com.fj/2026/06/15/el-nino-conditions-confirmed-sprep-urges-coordinated-regional-response/",
+   "publisher": "Pacific Islands News Association",
+   "title": "El Niño conditions confirmed: SPREP urges coordinated regional response",
+   "date": "2026-06-15"
+  },
+  {
+   "key": "Fiji Times 2026-09-10",
+   "url": "https://www.pressreader.com/fiji/the-fiji-times/20260910/281986089440408",
+   "publisher": "The Fiji Times",
+   "title": "El Nino in the Pacific (COSPPac's Philip Malsale)",
+   "date": "2026-09-10"
+  },
+  {
+   "key": "PINA/SPC 2026-10-19",
+   "url": "https://pina.com.fj/2026/10/19/warming-ocean-and-the-silent-battle-beneath-the-surface/",
+   "publisher": "Pacific Islands News Association (with the Pacific Community, SPC)",
+   "title": "Warming ocean and the silent battle beneath the surface",
+   "date": "2026-10-19"
+  },
+  {
+   "key": "APAC scorecard 2026",
+   "url": "https://www.cropmonitor.org/global-crop-monitor",
+   "publisher": "Asia-Pacific Food Security & Fisheries Impact Scorecard (compiled; synthesising SPREP and others)",
+   "title": "Asia-Pacific Food Security & Fisheries Impact Scorecard 2026–2027",
+   "date": "2026-07-27"
+  },
+  {
+   "key": "ADB ADO Sep 2026",
+   "url": "https://www.adb.org/outlook/editions/september-2026",
+   "publisher": "Asian Development Bank",
+   "title": "Economic Forecasts: Asian Development Outlook September 2026",
+   "date": "2026-09-23"
+  },
+  {
+   "key": "UNICEF EAPRO 2026",
+   "url": "https://www.unicef.org/appeals/eap/situation-reports",
+   "publisher": "UNICEF East Asia and Pacific Regional Office",
+   "title": "Humanitarian Situation Report No. 1 (Mid-Year), 1 January – 30 June 2026 (published 2026-08-04)",
+   "date": "2026-06-30"
+  },
+  {
+   "key": "UNICEF EAPRO 2026-10-06",
+   "url": "https://www.unicef.org/indonesia/climate/press-releases/190-million-children-exposed-el-ni%C3%B1o-related-climate-risks-across-asia-and-pacific",
+   "publisher": "UNICEF Asia and the Pacific",
+   "title": "190 million children exposed to El Niño-related climate risks across Asia and the Pacific (press release)",
+   "date": "2026-10-06"
+  },
+  {
+   "key": "Oxfam",
+   "url": "https://www.oxfam.org/en/powerful-el-nino-brings-droughts-and-food-insecurity-millions-papua-new-guinea",
+   "publisher": "Oxfam",
+   "title": "Powerful El Niño brings droughts and food insecurity to millions in Papua New Guinea (past-event account)",
+   "date": ""
+  }
+ ],
+ "wiki_notes": [
+  "pacific-islands-el-nino-2026",
+  "el-nino-priority-country-tiers-2026",
+  "el-nino-historical-events-asia-pacific",
+  "children-climate-risk-asia-pacific",
+  "anticipatory-action-el-nino-2026",
+  "el-nino-fisheries-impacts",
+  "asia-pacific-macro-outlook-2026",
+  "el-nino-2026-27",
+  "el-nino-appeals-early-action-plans-2026",
+  "el-nino-response-lessons-2023-24",
+  "png-drought-2026"
+ ]
+}
